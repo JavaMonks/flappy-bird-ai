@@ -19,6 +19,7 @@ public class Game extends PApplet {
     @Override
     public void draw() {
         background(0);
+        this.bird.update();
         this.bird.show();
     }
 }
