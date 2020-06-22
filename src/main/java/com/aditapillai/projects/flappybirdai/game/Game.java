@@ -22,4 +22,9 @@ public class Game extends PApplet {
         this.bird.update();
         this.bird.show();
     }
+
+    @Override
+    public void keyPressed() {
+        this.bird.jump();
+    }
 }
