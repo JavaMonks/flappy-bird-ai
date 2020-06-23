@@ -5,23 +5,37 @@ import com.aditapillai.projects.flappybirdai.game.Game;
 public class Pipe {
     private final Game game;
     private final float space;
+    private final float lastPipePosition;
     private float topLength;
     private float bottomLength;
     private float x;
     private float width;
+    private final int speed;
 
-    public Pipe(Game game) {
+    public Pipe(Game game, float x, float lastPipePosition) {
         this.game = game;
         this.space = 70;
-        this.initPipe();
+        this.x = x;
+        this.lastPipePosition = lastPipePosition;
+        this.speed = 5;
+        this.initPipe(false);
     }
 
-    private void initPipe() {
+    private void initPipe(boolean updateX) {
         this.topLength = this.game.random(this.game.height / 10, this.game.height - this.space);
         this.bottomLength = this.game.height - (this.topLength + this.space);
         this.width = this.game.random(10, 100);
-        //TODO: figure out how to handle the horizontal motion of pipes.
-        this.x = this.game.width / 2;
+
+        if (updateX) {
+            this.x = this.lastPipePosition;
+        }
+    }
+
+    public void update() {
+        this.x -= this.speed;
+        if (this.isOut()) {
+            this.initPipe(true);
+        }
     }
 
     public void show() {
@@ -44,5 +58,9 @@ public class Pipe {
 
     public float getWidth() {
         return width;
+    }
+
+    private boolean isOut() {
+        return (this.x + this.width <= 0);
     }
 }

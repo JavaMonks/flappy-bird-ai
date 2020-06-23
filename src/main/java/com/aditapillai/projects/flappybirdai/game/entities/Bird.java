@@ -1,14 +1,14 @@
 package com.aditapillai.projects.flappybirdai.game.entities;
 
 import com.aditapillai.projects.flappybirdai.game.Game;
-import processing.core.PVector;
 
 public class Bird {
     private final Game game;
 
-    private final PVector position;
-    private final PVector gravity;
-    private final PVector jump;
+    private final float gravity;
+    private final float jump;
+    private float y;
+    private float velocity;
 
     private final int diam;
     private final int radius;
@@ -16,11 +16,12 @@ public class Bird {
 
     public Bird(Game game) {
         this.game = game;
-        this.position = new PVector(50, (float) game.height / 2);
-        this.gravity = new PVector(0, 0.8f);
-        this.jump = new PVector(0, -10);
-        this.diam = 50;
-        this.radius = this.diam / 2;
+        this.y = (float) game.height / 2;
+        this.gravity = 0.8f;
+        this.velocity = 0;
+        this.jump = -12;
+        this.radius = 16;
+        this.diam = this.radius * 2;
     }
 
     public void show() {
@@ -29,18 +30,19 @@ public class Bird {
         } else {
             this.game.fill(255, 0, 0);
         }
-        this.game.ellipse(this.position.x, this.position.y, this.diam, this.diam);
+        this.game.ellipse(50, this.y, this.diam, this.diam);
     }
 
     public void update() {
         if (alive) {
-            this.position.add(this.gravity);
+            this.velocity += this.gravity;
+            this.y += this.velocity;
         }
     }
 
     public void jump() {
         if (alive) {
-            this.position.add(this.jump);
+            this.velocity += this.jump;
         }
     }
 
@@ -53,11 +55,11 @@ public class Bird {
     }
 
     public float getX() {
-        return this.position.x;
+        return 50;
     }
 
     public float getY() {
-        return this.position.y;
+        return this.y;
     }
 
     public float getRadius() {
