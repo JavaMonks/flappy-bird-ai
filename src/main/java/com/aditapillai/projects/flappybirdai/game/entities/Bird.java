@@ -19,9 +19,9 @@ public class Bird {
     public Bird(Game game) {
         this.game = game;
         this.y = (float) game.height / 2;
-        this.gravity = 0.8f;
+        this.gravity = 0.9f;
         this.velocity = 0;
-        this.jump = -12;
+        this.jump = -15;
         this.radius = 16;
         this.diam = this.radius * 2;
         this.x = 50;
@@ -39,6 +39,7 @@ public class Bird {
     public void update() {
         if (alive) {
             this.velocity += this.gravity;
+            this.velocity *= 0.8;
             this.y += this.velocity;
             this.score++;
         }
