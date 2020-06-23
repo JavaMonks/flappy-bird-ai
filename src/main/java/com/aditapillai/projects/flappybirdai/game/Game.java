@@ -27,9 +27,10 @@ public class Game extends PApplet {
         if (CollisionUtils.birdHitBorder(bird, height) || CollisionUtils.birdHitPipe(bird, pipe)) {
             bird.die();
         }
-        this.bird.show();
+        this.bird.think(pipe);
         this.bird.update();
 
+        this.bird.show();
         pipe.show();
     }
 
