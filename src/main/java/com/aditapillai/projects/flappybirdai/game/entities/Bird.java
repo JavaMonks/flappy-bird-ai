@@ -13,6 +13,8 @@ public class Bird {
     private final int diam;
     private final int radius;
     private boolean alive = true;
+    private final float x;
+    private int score;
 
     public Bird(Game game) {
         this.game = game;
@@ -22,6 +24,7 @@ public class Bird {
         this.jump = -12;
         this.radius = 16;
         this.diam = this.radius * 2;
+        this.x = 50;
     }
 
     public void show() {
@@ -30,13 +33,14 @@ public class Bird {
         } else {
             this.game.fill(255, 0, 0);
         }
-        this.game.ellipse(50, this.y, this.diam, this.diam);
+        this.game.ellipse(this.x, this.y, this.diam, this.diam);
     }
 
     public void update() {
         if (alive) {
             this.velocity += this.gravity;
             this.y += this.velocity;
+            this.score++;
         }
     }
 
@@ -55,7 +59,7 @@ public class Bird {
     }
 
     public float getX() {
-        return 50;
+        return this.x;
     }
 
     public float getY() {
