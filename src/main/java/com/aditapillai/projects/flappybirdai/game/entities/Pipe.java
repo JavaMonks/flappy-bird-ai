@@ -25,9 +25,24 @@ public class Pipe {
     }
 
     public void show() {
+        this.game.fill(255);
         this.game.rect(this.x, 0, this.width, this.topLength);
         this.game.rect(this.x, this.topLength + this.space, this.width, this.bottomLength);
     }
 
+    public float getX() {
+        return x;
+    }
 
+    public float getTopLength() {
+        return topLength;
+    }
+
+    public float getSpace() {
+        return space;
+    }
+
+    public float getWidth() {
+        return width;
+    }
 }

@@ -10,8 +10,8 @@ public class Bird {
     private final PVector gravity;
     private final PVector jump;
 
-    private final int birdDiam;
-    private final int birdRadius;
+    private final int diam;
+    private final int radius;
     private boolean alive = true;
 
     public Bird(Game game) {
@@ -19,20 +19,22 @@ public class Bird {
         this.position = new PVector(50, (float) game.height / 2);
         this.gravity = new PVector(0, 0.8f);
         this.jump = new PVector(0, -10);
-        this.birdDiam = 50;
-        this.birdRadius = this.birdDiam / 2;
+        this.diam = 50;
+        this.radius = this.diam / 2;
     }
 
     public void show() {
-        this.game.ellipse(this.position.x, this.position.y, this.birdDiam, this.birdDiam);
+        if (alive) {
+            this.game.fill(0, 255, 0);
+        } else {
+            this.game.fill(255, 0, 0);
+        }
+        this.game.ellipse(this.position.x, this.position.y, this.diam, this.diam);
     }
 
     public void update() {
         if (alive) {
             this.position.add(this.gravity);
-            if (this.hitBorder()) {
-                this.kill();
-            }
         }
     }
 
@@ -42,13 +44,23 @@ public class Bird {
         }
     }
 
-    public void kill() {
+    public void die() {
         this.alive = false;
     }
 
-    private boolean hitBorder() {
-        boolean hitBottom = (this.position.y + this.birdRadius) >= this.game.height;
-        boolean hitTop = (this.position.y) <= this.birdRadius;
-        return hitBottom || hitTop;
+    public boolean isAlive() {
+        return this.alive;
+    }
+
+    public float getX() {
+        return this.position.x;
+    }
+
+    public float getY() {
+        return this.position.y;
+    }
+
+    public float getRadius() {
+        return this.radius;
     }
 }
