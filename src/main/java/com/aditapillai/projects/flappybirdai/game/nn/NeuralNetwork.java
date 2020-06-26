@@ -114,14 +114,14 @@ public class NeuralNetwork {
         return result;
     }
 
-    public void mutate(double learningRate, Supplier<Double> randomizer) {
+    public void mutate(double learningRate, Supplier<Float> randomizer) {
         this.mutate(this.weightsBiasHiddenToOutput, learningRate, randomizer);
         this.mutate(this.weightsBiasInputToHidden, learningRate, randomizer);
         this.mutate(this.weightsHiddenToOutput, learningRate, randomizer);
         this.mutate(this.weightsInputToHidden, learningRate, randomizer);
     }
 
-    private void mutate(SimpleMatrix matrix, double learningRate, Supplier<Double> randomizer) {
+    private void mutate(SimpleMatrix matrix, double learningRate, Supplier<Float> randomizer) {
         for (int i = 0; i < matrix.numRows(); i++) {
             for (int j = 0; j < matrix.numCols(); j++) {
                 if (Math.random() < learningRate) {
@@ -131,7 +131,4 @@ public class NeuralNetwork {
         }
     }
 
-    public NeuralNetwork clone() {
-        return this;
-    }
 }

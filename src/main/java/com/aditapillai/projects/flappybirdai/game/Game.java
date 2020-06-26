@@ -1,22 +1,23 @@
 package com.aditapillai.projects.flappybirdai.game;
 
-import com.aditapillai.projects.flappybirdai.game.entities.Bird;
 import com.aditapillai.projects.flappybirdai.game.entities.Pipe;
-import com.aditapillai.projects.flappybirdai.game.utils.CollisionUtils;
+import com.aditapillai.projects.flappybirdai.game.ga.GeneticAlgorithm;
+import com.aditapillai.projects.flappybirdai.game.ga.Population;
 import processing.core.PApplet;
 
 public class Game extends PApplet {
-    private Bird bird;
     private Pipe pipe;
+
+    private Population population;
 
     @Override
     public void settings() {
-        this.size(600, 640);
+        this.size(500, 600);
     }
 
     @Override
     public void setup() {
-        this.bird = new Bird(this);
+        this.population = new Population(this, 500, 0);
         this.pipe = new Pipe(this, width, width);
     }
 
@@ -24,18 +25,13 @@ public class Game extends PApplet {
     public void draw() {
         background(0);
         pipe.update();
-        if (CollisionUtils.birdHitBorder(bird, height) || CollisionUtils.birdHitPipe(bird, pipe)) {
-            bird.die();
-        }
-        this.bird.think(pipe);
-        this.bird.update();
-
-        this.bird.show();
+        population.update(pipe);
         pipe.show();
+
+        if (population.isEmpty()) {
+            GeneticAlgorithm.nextGeneration(population);
+            this.pipe = new Pipe(this, width, width);
+        }
     }
 
-    @Override
-    public void keyPressed() {
-        this.bird.jump();
-    }
 }

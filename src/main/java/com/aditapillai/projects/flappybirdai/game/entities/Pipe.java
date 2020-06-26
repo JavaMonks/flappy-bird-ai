@@ -14,7 +14,7 @@ public class Pipe {
 
     public Pipe(Game game, float x, float lastPipePosition) {
         this.game = game;
-        this.space = 70;
+        this.space = 150;
         this.x = x;
         this.lastPipePosition = lastPipePosition;
         this.speed = 5;
@@ -22,9 +22,9 @@ public class Pipe {
     }
 
     private void initPipe(boolean updateX) {
-        this.topLength = this.game.random(this.game.height / 10, this.game.height - this.space);
+        this.topLength = this.game.random(this.game.height / 10, this.game.height / 1.5f);
         this.bottomLength = this.game.height - (this.topLength + this.space);
-        this.width = this.game.random(10, 100);
+        this.width = 100;
 
         if (updateX) {
             this.x = this.lastPipePosition;
@@ -52,6 +52,10 @@ public class Pipe {
         return topLength;
     }
 
+    public float getBottomLength() {
+        return bottomLength;
+    }
+
     public float getSpace() {
         return space;
     }
@@ -60,7 +64,7 @@ public class Pipe {
         return width;
     }
 
-    private boolean isOut() {
+    public boolean isOut() {
         return (this.x + this.width <= 0);
     }
 }
