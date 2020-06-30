@@ -88,9 +88,6 @@ public class Population {
             this.globalBestFitness = best.getFitness();
 
         }
-
-        System.out.println(String.format("Current best %f", best.getFitness()));
-        System.out.println(String.format("Global best %f", this.globalBestFitness));
     }
 
     public void reInit(Set<Bird> birds) {

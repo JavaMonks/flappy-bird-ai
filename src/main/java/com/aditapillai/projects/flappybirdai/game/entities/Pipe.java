@@ -34,12 +34,13 @@ public class Pipe {
     public void update() {
         this.x -= this.speed;
         if (this.isOut()) {
+            Game.incrementScore();
             this.initPipe(true);
         }
     }
 
     public void show() {
-        this.game.fill(255);
+        this.game.fill(25,215,4);
         this.game.rect(this.x, 0, this.width, this.topLength);
         this.game.rect(this.x, this.topLength + this.space, this.width, this.bottomLength);
     }

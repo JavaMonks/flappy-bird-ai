@@ -36,7 +36,7 @@ public class Bird {
         this.gravity = 1f;
         this.velocity = 0;
         this.jump = -15;
-        this.radius = 16;
+        this.radius = 25;
         this.diam = this.radius * 2;
         this.x = 50;
         if (brain != null) {
@@ -47,8 +47,10 @@ public class Bird {
     }
 
     public void show() {
+        this.game.fill(255);
         if (alive) {
-            this.game.ellipse(this.x, this.y, this.diam, this.diam);
+//            this.game.ellipse(this.x, this.y, this.diam, this.diam);
+            this.game.image(Game.bird,this.x,this.y,this.diam,this.diam);
         }
     }
 
