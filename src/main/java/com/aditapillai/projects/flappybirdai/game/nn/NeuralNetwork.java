@@ -3,6 +3,7 @@ package com.aditapillai.projects.flappybirdai.game.nn;
 import org.ejml.simple.SimpleMatrix;
 
 import java.util.Random;
+import java.util.function.BiFunction;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Supplier;
 
@@ -114,18 +115,18 @@ public class NeuralNetwork {
         return result;
     }
 
-    public void mutate(double learningRate, Supplier<Float> randomizer) {
+    public void mutate(double learningRate, BiFunction<Float,Float,Float> randomizer) {
         this.mutate(this.weightsBiasHiddenToOutput, learningRate, randomizer);
         this.mutate(this.weightsBiasInputToHidden, learningRate, randomizer);
         this.mutate(this.weightsHiddenToOutput, learningRate, randomizer);
         this.mutate(this.weightsInputToHidden, learningRate, randomizer);
     }
 
-    private void mutate(SimpleMatrix matrix, double learningRate, Supplier<Float> randomizer) {
+    private void mutate(SimpleMatrix matrix, double learningRate, BiFunction<Float,Float,Float> randomizer) {
         for (int i = 0; i < matrix.numRows(); i++) {
             for (int j = 0; j < matrix.numCols(); j++) {
                 if (Math.random() < learningRate) {
-                    matrix.set(i, j, matrix.get(i, j) + randomizer.get() * 0.1);
+                    matrix.set(i, j, matrix.get(i, j) + randomizer.apply(0f,0.1f));
                 }
             }
         }

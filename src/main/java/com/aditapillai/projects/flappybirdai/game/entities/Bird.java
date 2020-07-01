@@ -16,20 +16,16 @@ public class Bird {
     private final int radius;
     private boolean alive = true;
     private final float x;
-    private final int id;
-    private int score;
+    private final String id;
     private int lifespan;
     private final NeuralNetwork brain;
     private double fitness;
-    private boolean isBest;
 
-    private int pipes;
-
-    public Bird(Game game, int id) {
+    public Bird(Game game, String id) {
         this(game, null, id);
     }
 
-    public Bird(Game game, NeuralNetwork brain, int id) {
+    public Bird(Game game, NeuralNetwork brain, String id) {
         this.game = game;
         this.id = id;
         this.y = (float) game.height / 2;
@@ -42,56 +38,42 @@ public class Bird {
         if (brain != null) {
             this.brain = brain;
         } else {
-            this.brain = new NeuralNetwork(4, 64, 2, NeuralNetwork::sigmoid, NeuralNetwork::dSigmoid);
+            this.brain = new NeuralNetwork(4, 64, 1, NeuralNetwork::tanh, NeuralNetwork::dTanh);
         }
     }
 
     public void show() {
         this.game.fill(255);
         if (alive) {
-//            this.game.ellipse(this.x, this.y, this.diam, this.diam);
-            this.game.image(Game.bird,this.x,this.y,this.diam,this.diam);
+            this.game.image(Game.bird, this.x, this.y, this.diam, this.diam);
         }
     }
 
     public void update() {
         if (alive) {
             this.velocity += this.gravity;
-            this.velocity *= 0.9;
+//            this.velocity *= 0.9;
             this.y += this.velocity;
             this.lifespan++;
         }
     }
 
     public void think(Pipe pipe) {
-//        float birdPosition = this.y / this.game.height;
-//        float pipeX = pipe.getX() / this.game.width;
-//        float pipeTopEnd = pipe.getTopLength() / this.game.height;
-//        float pipeBottomStart = (this.game.height - pipe.getBottomLength()) / this.game.height;
-//        float velocity = this.velocity / 10;
-//        float[] result = this.brain.feedForward(new float[]{birdPosition, pipeX, pipeTopEnd, pipeBottomStart, velocity});
-
-//        this.game.line(this.x,this.y,pipe.getX(), pipe.getTopLength());
-//        float inputs[] = new float[5];
-//        inputs[0] = y / game.height;
-//        inputs[1] = velocity/ 10;
-//        inputs[2] = pipe.getTopLength() / game.height;
-//        inputs[3] = pipe.getBottomLength() / game.width;
-//        inputs[4] = pipe.getX() / game.width;
-
         float[] inputs = new float[4];
         float horizontalDistanceFromPipe = pipe.getX() - this.x;
-        float distanceToTop = pipe.getTopLength() - this.y; //-ve below
-        float distanceToBottom = pipe.getTopLength() + pipe.getSpace() - this.y;//+ve up
+        float distanceToTop = this.y - pipe.getTopLength();
+        float distanceToBottom = (pipe.getTopLength() + pipe.getSpace()) - this.y;
+//
+        inputs[0] = PApplet.map(horizontalDistanceFromPipe, 0, this.game.width - this.x, 1, 0);
+        inputs[1] = PApplet.map(Math.max(0, distanceToTop), 0, this.game.height, 0, 1);
+        inputs[2] = PApplet.map(Math.max(0, distanceToBottom), 0, this.game.height, 0, 1);
+//        inputs[3] = PApplet.map(this.y, 0, this.game.height, -1, 1);
+        inputs[3] = PApplet.map(this.velocity, this.jump, -this.jump, -1, 1);
 
-        inputs[0] = PApplet.map(horizontalDistanceFromPipe, 0, this.game.width, -1, 1);
-        inputs[1] = PApplet.map(distanceToTop, 0, this.game.height, -1, 1);
-        inputs[2] = PApplet.map(distanceToBottom, 0, this.game.height, -1, 1);
-        inputs[3] = PApplet.map(this.velocity, 0, this.game.height, -1, 1);
 
         float[] guess = brain.feedForward(inputs);
 
-        if (guess[0] > guess[1]) {
+        if (guess[0] > 0.6) {
             this.jump();
         }
     }
@@ -106,10 +88,6 @@ public class Bird {
         this.alive = false;
     }
 
-    public boolean isAlive() {
-        return this.alive;
-    }
-
     public float getX() {
         return this.x;
     }
@@ -122,16 +100,12 @@ public class Bird {
         return this.radius;
     }
 
-    public int getId() {
+    public String  getId() {
         return this.id;
     }
 
     public int getLifespan() {
         return this.lifespan;
-    }
-
-    public int getPipes() {
-        return pipes;
     }
 
     public double getFitness() {
@@ -147,16 +121,8 @@ public class Bird {
     }
 
     public Bird mutate() {
-        this.brain.mutate(0.1, this.game::randomGaussian);
+        this.brain.mutate(0.01, this.game::random);
         return this;
-    }
-
-    public void setBest(boolean best) {
-        isBest = best;
-    }
-
-    public void incrementPipe() {
-        this.pipes++;
     }
 
 
