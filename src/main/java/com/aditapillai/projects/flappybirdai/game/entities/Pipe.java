@@ -10,7 +10,7 @@ public class Pipe {
     private float bottomLength;
     private float x;
     private float width;
-    private final int speed;
+    private double speed;
 
     public Pipe(Game game, float x, float lastPipePosition) {
         this.game = game;
@@ -35,6 +35,9 @@ public class Pipe {
         this.x -= this.speed;
         if (this.isOut()) {
             Game.incrementScore();
+            if (Game.getScore() % 10 == 0){
+                this.speed = this.speed + this.speed * 0.1;
+            }
             this.initPipe(true);
         }
     }

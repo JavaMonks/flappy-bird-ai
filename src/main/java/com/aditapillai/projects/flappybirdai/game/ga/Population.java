@@ -5,25 +5,23 @@ import com.aditapillai.projects.flappybirdai.game.entities.Bird;
 import com.aditapillai.projects.flappybirdai.game.entities.Pipe;
 import com.aditapillai.projects.flappybirdai.game.utils.CollisionUtils;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Population {
     private final Game game;
     public int gen;
-    private Set<Bird> birds;
-    private Set<Integer> aliveBirds;
+    private List<Bird> birds;
+    private Set<String> aliveBirds;
     private Bird best;
-    private double fitnessSum;
     private double globalBestFitness;
 
     public Population(Game game, int size, int gen) {
         this(game, null, size, gen);
     }
 
-    public Population(Game game, Set<Bird> birds, int size, int gen) {
+    public Population(Game game, List<Bird> birds, int size, int gen) {
         this.aliveBirds = new HashSet<>();
         this.gen = gen;
         if (birds != null) {
@@ -31,9 +29,9 @@ public class Population {
             birds.forEach(bird -> this.aliveBirds.add(bird.getId()));
         } else {
             this.birds = IntStream.rangeClosed(1, size)
-                                  .mapToObj(index -> new Bird(game, index))
+                                  .mapToObj(index -> new Bird(game, String.format("%d:%d",this.gen,index)))
                                   .peek(bird -> this.aliveBirds.add(bird.getId()))
-                                  .collect(Collectors.toSet());
+                                  .collect(Collectors.toList());
 
         }
         this.game = game;
@@ -48,11 +46,8 @@ public class Population {
                 bird.die();
                 this.aliveBirds.remove(bird.getId());
             } else {
-                if (pipe.isOut()) {
-                    bird.incrementPipe();
-                }
+                bird.show();
             }
-            bird.show();
         });
     }
 
@@ -64,17 +59,17 @@ public class Population {
         return this.birds.size();
     }
 
-    public Set<Bird> getBirds() {
+    public List<Bird> getBirds() {
         return this.birds;
     }
 
     public void calculateFitness() {
 
         Bird best = null;
-        double max = -1;
+        double max = Double.NEGATIVE_INFINITY;
         for (Bird bird : birds) {
-            double fitness = (double) bird.getPipes() * bird.getPipes() + bird.getLifespan();
-            this.fitnessSum += fitness;
+            int score = Game.getScore();
+            double fitness = (double) score * score * score + bird.getLifespan();
             if (fitness > max) {
                 max = fitness;
                 best = bird;
@@ -82,18 +77,16 @@ public class Population {
             bird.setFitness(fitness);
         }
 
-        best.setBest(true);
         if (this.globalBestFitness < best.getFitness()) {
             this.best = best;
             this.globalBestFitness = best.getFitness();
-
         }
+
     }
 
-    public void reInit(Set<Bird> birds) {
+    public void reInit(List<Bird> birds) {
         this.birds = birds;
         this.aliveBirds = new HashSet<>();
-        this.fitnessSum = 0;
         this.gen++;
         birds.forEach(bird -> this.aliveBirds.add(bird.getId()));
     }
@@ -102,7 +95,18 @@ public class Population {
         return best;
     }
 
+    public void sort() {
+        this.birds.sort(Comparator.comparing(Bird::getFitness)
+                                  .reversed());
+    }
+
+    public void killBottomHalf() {
+        this.birds = this.birds.subList(0, this.birds.size() / 2);
+    }
+
     public double getFitnessSum() {
-        return fitnessSum;
+        return this.birds.stream()
+                         .mapToDouble(Bird::getFitness)
+                         .sum();
     }
 }

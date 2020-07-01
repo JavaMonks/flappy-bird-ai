@@ -1,36 +1,42 @@
 package com.aditapillai.projects.flappybirdai.game.ga;
 
+import com.aditapillai.projects.flappybirdai.game.Game;
 import com.aditapillai.projects.flappybirdai.game.entities.Bird;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 public class GeneticAlgorithm {
 
-    public static Population nextGeneration(Population population) {
+    public static void nextGeneration(Game game, Population population) {
 
         List<Bird> birds = naturalSelection(population);
-        Set<Bird> nextGenBirds = birds.stream()
-                                      .map(Bird::child)
-                                      .map(Bird::mutate)
-                                      .collect(Collectors.toSet());
+        List<Bird> nextGenBirds = birds.stream()
+                                       .map(Bird::child)
+                                       .map(Bird::mutate)
+                                       .limit(birds.size() - 1)
+                                       .collect(LinkedList::new, LinkedList::add, LinkedList::addAll);
 
         Bird bestChild = population.getBest()
                                    .child();
+
         nextGenBirds.add(bestChild);
         population.reInit(nextGenBirds);
-        return population;
     }
 
     private static List<Bird> naturalSelection(Population population) {
+        int size = population.size();
         population.calculateFitness();
+        population.sort();
+        population.killBottomHalf();
+        double fitnessSum = population.getFitnessSum();
+
         List<Bird> selectedParents = new LinkedList<>();
 
-        for (int i = 0; i < population.size() - 1; i++) {
-            double random = new Random().doubles(0, population.getFitnessSum())
+        for (int i = 0; i < size; i++) {
+            double random = new Random().doubles(0, fitnessSum)
                                         .findFirst()
                                         .getAsDouble();
             for (Bird bird : population.getBirds()) {
